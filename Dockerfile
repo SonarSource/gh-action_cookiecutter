@@ -1,5 +1,5 @@
 # Use the Alpine Linux base image
-FROM python:3.11-alpine
+FROM python:3.11-alpine@sha256:8d8c6d3808243160605925c2a7ab2dc5c72d0e75651699b0639143613e0855b8
 
 RUN apk update && \
     apk add --no-cache jq \
