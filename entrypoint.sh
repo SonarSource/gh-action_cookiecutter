@@ -61,13 +61,13 @@ create_repository() {
 
   userType=$(jq -r '.type' <<<"$resp")
 
-  if [ "$userType" == "User" ]; then
+  if [[ "$userType" == "User" ]]; then
     curl --silent --show-error -X POST -i -H "Authorization: token $github_token" -H "X-GitHub-Api-Version: 2022-11-28" \
       -d "{ \
           \"name\": \"$repository_name\", \"visibility\": \"$repository_visibility\"
         }" \
       "$git_url/user/repos"
-  elif [ "$userType" == "Organization" ]; then
+  elif [[ "$userType" == "Organization" ]]; then
     curl --silent --show-error -i -H "Authorization: token $github_token" \
       -d "{ \
           \"name\": \"$repository_name\", \"visibility\": \"$repository_visibility\"
@@ -91,7 +91,7 @@ prepare_cookiecutter_extra_context() {
 }
 
 cd_to_scaffold_directory() {
-  if [ -n "$monorepo_url" ] && [ -n "$scaffold_directory" ]; then
+  if [[ -n "$monorepo_url" && -n "$scaffold_directory" ]]; then
     cd "$scaffold_directory"
   fi
 }
@@ -111,7 +111,7 @@ apply_cookiecutter_template() {
 
   # Call cookiecutter with extra context arguments
   echo "cookiecutter --no-input $cookie_cutter_template ${args[*]}"
-  if [ -n "$template_directory" ]; then
+  if [[ -n "$template_directory" ]]; then
     cookiecutter --no-input "$cookie_cutter_template" --directory "$template_directory" "${args[@]}"
   else
     cookiecutter --no-input "$cookie_cutter_template" "${args[@]}"
@@ -120,7 +120,7 @@ apply_cookiecutter_template() {
 
 push_to_repository() {
   local default_branch="master"
-  if [ -n "$monorepo_url" ] && [ -n "$scaffold_directory" ]; then
+  if [[ -n "$monorepo_url" && -n "$scaffold_directory" ]]; then
     git config user.name "GitHub Actions Bot"
     git config user.email "github-actions[bot]@users.noreply.github.com"
     git add .
@@ -180,7 +180,7 @@ report_to_port() {
 main() {
   access_token=$(get_access_token)
 
-  if [ -z "$monorepo_url" ] || [ -z "$scaffold_directory" ]; then
+  if [[ -z "$monorepo_url" || -z "$scaffold_directory" ]]; then
     send_log "Creating a new repository: $repository_name 🏃"
     create_repository
     send_log "New repository created: $repo_url 🚀"
@@ -203,7 +203,7 @@ main() {
     send_log "Skipping reporting to Port the new entity created 🚢"
   fi
 
-  if [ -n "$monorepo_url" ] && [ -n "$scaffold_directory" ]; then
+  if [[ -n "$monorepo_url" && -n "$scaffold_directory" ]]; then
     send_log "Finished! 🏁✅"
   else
     send_log "Finished! Visit $repo_url 🏁✅"
