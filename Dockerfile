@@ -1,13 +1,15 @@
-# Use the Alpine Linux base image
 FROM python:3.11-alpine
 
-RUN apk update && \
-    apk add --no-cache jq \
+COPY requirements.txt /tmp/requirements.txt
+
+RUN apk add --no-cache \
+    bash \
     curl \
     git \
+    jq \
     openssh-client \
-    bash \
-    && pip3 install cookiecutter && pip3 install six
+    && pip3 install --upgrade pip \
+    && pip3 install --only-binary=:all: --no-cache-dir -r /tmp/requirements.txt
 
 COPY *.sh /
 RUN chmod +x /*.sh
