@@ -2,6 +2,8 @@
 
 set -e
 
+readonly JSON_CONTENT_TYPE='Content-Type: application/json'
+
 port_client_id="$INPUT_PORTCLIENTID"
 port_client_secret="$INPUT_PORTCLIENTSECRET"
 port_run_id="$INPUT_PORTRUNID"
@@ -22,7 +24,7 @@ repo_url="https://github.com/$org_name/$repository_name"
 add_link_to_port="$INPUT_ADDLINKTOPORT"
 
 get_access_token() {
-  curl --silent --show-error --location --request POST 'https://api.getport.io/v1/auth/access_token' --header 'Content-Type: application/json' --data-raw "{
+  curl --silent --show-error --location --request POST 'https://api.getport.io/v1/auth/access_token' --header "$JSON_CONTENT_TYPE" --data-raw "{
     \"clientId\": \"$port_client_id\",
     \"clientSecret\": \"$port_client_secret\"
   }" | jq -r '.accessToken'
@@ -33,7 +35,7 @@ send_log() {
   if [[ -n $port_run_id ]]; then
     curl --silent --show-error --location "https://api.getport.io/v1/actions/runs/$port_run_id/logs" \
       --header "Authorization: Bearer $access_token" \
-      --header "Content-Type: application/json" \
+      --header "$JSON_CONTENT_TYPE" \
       --data "{
         \"message\": \"$message\"
       }"
@@ -50,14 +52,14 @@ add_link() {
   local link_url=$1
   curl --silent --show-error --request PATCH --location "https://api.getport.io/v1/actions/runs/$port_run_id" \
     --header "Authorization: Bearer $access_token" \
-    --header "Content-Type: application/json" \
+    --header "$JSON_CONTENT_TYPE" \
     --data "{
       \"link\": \"$link_url\"
     }"
 }
 
 create_repository() {
-  resp=$(curl --silent --show-error -H "Authorization: token $github_token" -H "Accept: application/json" -H "Content-Type: application/json" "$git_url/users/$org_name")
+  resp=$(curl --silent --show-error -H "Authorization: token $github_token" -H "Accept: application/json" -H "$JSON_CONTENT_TYPE" "$git_url/users/$org_name")
 
   userType=$(jq -r '.type' <<<"$resp")
 
@@ -145,7 +147,7 @@ push_to_repository() {
 
     pr_url=$(curl --silent --show-error -X POST \
       -H "Authorization: token $github_token" \
-      -H "Content-Type: application/json" \
+      -H "$JSON_CONTENT_TYPE" \
       -d "$PR_PAYLOAD" \
       "$git_url/repos/$owner/$repo/pulls" | jq -r '.html_url')
 
@@ -169,7 +171,7 @@ push_to_repository() {
 report_to_port() {
   curl --silent --show-error --location "https://api.getport.io/v1/blueprints/$blueprint_identifier/entities?run_id=$port_run_id" \
     --header "Authorization: Bearer $access_token" \
-    --header "Content-Type: application/json" \
+    --header "$JSON_CONTENT_TYPE" \
     --data "{
       \"identifier\": \"$repository_name\",
       \"title\": \"$repository_name\",
