@@ -1,14 +1,15 @@
-FROM python:3.11-alpine
+FROM python:3.11-slim
 
 COPY requirements.txt /tmp/requirements.txt
 
-RUN apk add --no-cache \
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
     bash \
     curl \
     git \
     jq \
     openssh-client \
-    && pip3 install --upgrade pip \
+    && rm -rf /var/lib/apt/lists/* \
     && pip3 install --only-binary=:all: --no-cache-dir -r /tmp/requirements.txt
 
 COPY *.sh /
