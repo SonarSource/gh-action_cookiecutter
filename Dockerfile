@@ -9,6 +9,10 @@ RUN apt-get update \
     openssh-client \
     && rm -rf /var/lib/apt/lists/* \
     && pip3 install --only-binary :all: --no-cache-dir \
+    Jinja2==3.1.6 \
+    MarkupSafe==3.0.3 \
+    PyYAML==6.0.3 \
+    Pygments==2.20.0 \
     arrow==1.4.0 \
     binaryornot==0.6.0 \
     certifi==2026.6.17 \
@@ -16,14 +20,10 @@ RUN apt-get update \
     click==8.4.2 \
     cookiecutter==2.6.0 \
     idna==3.18 \
-    Jinja2==3.1.6 \
     markdown-it-py==4.2.0 \
-    MarkupSafe==3.0.3 \
     mdurl==0.1.2 \
-    Pygments==2.20.0 \
     python-dateutil==2.9.0.post0 \
     python-slugify==8.0.4 \
-    PyYAML==6.0.3 \
     requests==2.34.2 \
     rich==15.0.0 \
     six==1.17.0 \
