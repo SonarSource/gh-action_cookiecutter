@@ -3,7 +3,6 @@
 set -e
 
 readonly JSON_CONTENT_TYPE='Content-Type: application/json'
-readonly CURL_HTTPS_FLAGS=(--proto '=https' --proto-redir '=https')
 
 port_client_id="$INPUT_PORTCLIENTID"
 port_client_secret="$INPUT_PORTCLIENTSECRET"
@@ -25,7 +24,7 @@ repo_url="https://github.com/$org_name/$repository_name"
 add_link_to_port="$INPUT_ADDLINKTOPORT"
 
 get_access_token() {
-  curl --silent --show-error --location "${CURL_HTTPS_FLAGS[@]}" --request POST 'https://api.getport.io/v1/auth/access_token' --header "$JSON_CONTENT_TYPE" --data-raw "{
+  curl --silent --show-error --location --proto '=https' --proto-redir '=https' --request POST 'https://api.getport.io/v1/auth/access_token' --header "$JSON_CONTENT_TYPE" --data-raw "{
     \"clientId\": \"$port_client_id\",
     \"clientSecret\": \"$port_client_secret\"
   }" | jq -r '.accessToken'
@@ -34,7 +33,7 @@ get_access_token() {
 send_log() {
   local message=$1
   if [[ -n $port_run_id ]]; then
-    curl --silent --show-error --location "${CURL_HTTPS_FLAGS[@]}" "https://api.getport.io/v1/actions/runs/$port_run_id/logs" \
+    curl --silent --show-error --location --proto '=https' --proto-redir '=https' "https://api.getport.io/v1/actions/runs/$port_run_id/logs" \
       --header "Authorization: Bearer $access_token" \
       --header "$JSON_CONTENT_TYPE" \
       --data "{
@@ -51,7 +50,7 @@ add_link() {
     return
   fi
   local link_url=$1
-  curl --silent --show-error --request PATCH --location "${CURL_HTTPS_FLAGS[@]}" "https://api.getport.io/v1/actions/runs/$port_run_id" \
+  curl --silent --show-error --request PATCH --location --proto '=https' --proto-redir '=https' "https://api.getport.io/v1/actions/runs/$port_run_id" \
     --header "Authorization: Bearer $access_token" \
     --header "$JSON_CONTENT_TYPE" \
     --data "{
@@ -170,7 +169,7 @@ push_to_repository() {
 }
 
 report_to_port() {
-  curl --silent --show-error --location "${CURL_HTTPS_FLAGS[@]}" "https://api.getport.io/v1/blueprints/$blueprint_identifier/entities?run_id=$port_run_id" \
+  curl --silent --show-error --location --proto '=https' --proto-redir '=https' "https://api.getport.io/v1/blueprints/$blueprint_identifier/entities?run_id=$port_run_id" \
     --header "Authorization: Bearer $access_token" \
     --header "$JSON_CONTENT_TYPE" \
     --data "{
