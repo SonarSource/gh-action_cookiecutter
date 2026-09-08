@@ -4,7 +4,7 @@ on:
   merge_group:
   push:
     branches:
-      - main
+      - master
 
 name: pre-commit
 
