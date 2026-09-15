@@ -1,0 +1,15 @@
+This project is derived from port-labs/cookiecutter-gha
+(https://github.com/port-labs/cookiecutter-gha), first vendored at commit 12e32f0
+(2023-04-09) and last synced from upstream at commit abd7cd7 (2024-12-02).
+
+The upstream project publishes no LICENSE, so all rights in the upstream code
+remain reserved by its authors — no inbound grant exists that would let
+SonarSource relicense it or assert its own license terms over that code. This
+repository is treated as an unmaterialized fork of the upstream project rather
+than original SonarSource work (see .github/sonarsource.yml), pending
+confirmation from Release Engineering/Legal on how to resolve the upstream's
+licensing status for real (e.g. obtaining a grant from port-labs, or rewriting
+the vendored code). That confirmation has not been sought or obtained yet.
+
+SonarSource's own modifications (entrypoint.sh, Dockerfile, CI configuration)
+carry no separate license grant while that status is unresolved.

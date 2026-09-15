@@ -1,0 +1,5 @@
+version: "0.2.0"
+
+# Vendored copy of port-labs/cookiecutter-gha.
+overrides:
+  fork: True
