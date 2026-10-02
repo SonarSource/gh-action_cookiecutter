@@ -86,7 +86,9 @@ create_repository() {
 # GitHub rate-limits unauthenticated clones from shared runner egress.
 configure_git_auth() {
   if [[ -n "$github_token" ]]; then
-    git config --global http.https://github.com/.extraheader "AUTHORIZATION: bearer ${github_token}"
+    export GIT_CONFIG_COUNT=1
+    export GIT_CONFIG_KEY_0="http.https://github.com/.extraheader"
+    export GIT_CONFIG_VALUE_0="AUTHORIZATION: bearer ${github_token}"
   fi
 }
 
