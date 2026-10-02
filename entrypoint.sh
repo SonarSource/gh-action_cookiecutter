@@ -83,6 +83,13 @@ create_repository() {
   fi
 }
 
+# GitHub rate-limits unauthenticated clones from shared runner egress.
+configure_git_auth() {
+  if [[ -n "$github_token" ]]; then
+    git config --global http.https://github.com/.extraheader "AUTHORIZATION: bearer ${github_token}"
+  fi
+}
+
 clone_monorepo() {
   git clone "$monorepo_url" monorepo
   cd monorepo
@@ -163,7 +170,7 @@ push_to_repository() {
     git add .
     git commit -m "Initial commit after scaffolding"
     git branch -M $default_branch
-    git remote add origin "https://oauth2:$github_token@github.com/$org_name/$repository_name.git"
+    git remote add origin "https://github.com/$org_name/$repository_name.git"
     git push -u origin $default_branch
     add_link "$repo_url"
   fi
@@ -182,6 +189,7 @@ report_to_port() {
 
 main() {
   access_token=$(get_access_token)
+  configure_git_auth
 
   if [[ -z "$monorepo_url" || -z "$scaffold_directory" ]]; then
     send_log "Creating a new repository: $repository_name 🏃"
