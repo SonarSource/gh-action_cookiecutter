@@ -29,7 +29,7 @@ RUN apt-get update \
     six==1.17.0 \
     text-unidecode==1.3 \
     tzdata==2026.2 \
-    urllib3==2.7.0 \
+    urllib3==2.8.0 \
     && groupadd --system --gid 1001 action \
     && useradd --system --uid 1001 --gid action --home-dir /home/action --shell /bin/bash action
 
