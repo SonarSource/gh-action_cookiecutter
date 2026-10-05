@@ -84,11 +84,14 @@ create_repository() {
 }
 
 # GitHub rate-limits unauthenticated clones from shared runner egress.
+# Git smart HTTP authenticates with Basic username x-access-token.
 configure_git_auth() {
   if [[ -n "$github_token" ]]; then
+    local basic
+    basic=$(printf 'x-access-token:%s' "$github_token" | base64 | tr -d '\n')
     export GIT_CONFIG_COUNT=1
     export GIT_CONFIG_KEY_0="http.https://github.com/.extraheader"
-    export GIT_CONFIG_VALUE_0="AUTHORIZATION: bearer ${github_token}"
+    export GIT_CONFIG_VALUE_0="AUTHORIZATION: basic ${basic}"
   fi
 }
 
