@@ -58,6 +58,48 @@ inputs:
 outputs:
   repoURL:
     description: 'The URL of the created repository'
+    value: ${{ steps.scaffold.outputs.repoURL }}
 runs:
-  using: docker
-  image: Dockerfile
+  using: composite
+  steps:
+    - name: Docker Hub credentials
+      id: dockerhub
+      uses: SonarSource/vault-action-wrapper@v3
+      with:
+        secrets: |
+          development/kv/data/docker/sonardocker login | username;
+          development/kv/data/docker/sonardocker access_token_ro | token;
+    - name: Login to Docker Hub
+      uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1 # v3.5.0
+      with:
+        username: ${{ fromJSON(steps.dockerhub.outputs.vault).username }}
+        password: ${{ fromJSON(steps.dockerhub.outputs.vault).token }}
+    - name: Build the scaffolding image
+      id: build
+      shell: bash
+      run: |
+        image="gh-action-cookiecutter:${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+        docker build --tag "$image" "$GITHUB_ACTION_PATH"
+        echo "image=$image" >> "$GITHUB_OUTPUT"
+    - name: Scaffold the repository
+      id: scaffold
+      shell: bash
+      env:
+        IMAGE: ${{ steps.build.outputs.image }}
+        INPUT_TOKEN: ${{ inputs.token }}
+        INPUT_PORTCLIENTID: ${{ inputs.portClientId }}
+        INPUT_PORTCLIENTSECRET: ${{ inputs.portClientSecret }}
+        INPUT_BLUEPRINTIDENTIFIER: ${{ inputs.blueprintIdentifier }}
+        INPUT_REPOSITORYNAME: ${{ inputs.repositoryName }}
+        INPUT_REPOSITORYVISIBILITY: ${{ inputs.repositoryVisibility }}
+        INPUT_ORGANIZATIONNAME: ${{ inputs.organizationName }}
+        INPUT_COOKIECUTTERTEMPLATE: ${{ inputs.cookiecutterTemplate }}
+        INPUT_PORTUSERINPUTS: ${{ inputs.portUserInputs }}
+        INPUT_GITHUBURL: ${{ inputs.githubURL }}
+        INPUT_PORTRUNID: ${{ inputs.portRunId }}
+        INPUT_MONOREPOURL: ${{ inputs.monorepoUrl }}
+        INPUT_SCAFFOLDDIRECTORY: ${{ inputs.scaffoldDirectory }}
+        INPUT_TEMPLATEDIRECTORY: ${{ inputs.templateDirectory }}
+        INPUT_CREATEPORTENTITY: ${{ inputs.createPortEntity }}
+        INPUT_ADDLINKTOPORT: ${{ inputs.addLinkToPort }}
+      run: '"$GITHUB_ACTION_PATH/scripts/run-container.sh" "$IMAGE"'

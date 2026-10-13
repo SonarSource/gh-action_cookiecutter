@@ -14,6 +14,16 @@ In addition, as cookiecutter is an Open Source project you can make your own pro
 [Cookiecutter tutorial](https://cookiecutter.readthedocs.io/en/2.0.2/tutorials.html#create-your-very-own-cookiecutter-project-template)
 for details.
 
+## Requirements
+
+The action builds its image with an authenticated Docker Hub login, to avoid the anonymous pull rate limit:
+
+* the calling job needs the `id-token: write` permission;
+* the calling repository needs read access to `development/kv/data/docker/sonardocker` in Vault
+  (a `kv_paths` entry in the repository's order in `re-terraform-aws-vault`).
+
+The credentials are read from Vault when the action runs and are not part of the image.
+
 ## Inputs
 
 | Input                | Description                                                                                                                                                                                              | Required | Default                    |
