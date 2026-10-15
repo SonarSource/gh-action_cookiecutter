@@ -11,5 +11,5 @@ confirmation from Release Engineering/Legal on how to resolve the upstream's
 licensing status for real (e.g. obtaining a grant from port-labs, or rewriting
 the vendored code). That confirmation has not been sought or obtained yet.
 
-SonarSource's own modifications (entrypoint.sh, Dockerfile, CI configuration)
+SonarSource's own modifications (entrypoint.sh, scripts, CI configuration)
 carry no separate license grant while that status is unresolved.
