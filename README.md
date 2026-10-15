@@ -33,6 +33,17 @@ for details.
 | githubURL            | GitHub url for self hosted version                                                                                                                                                                       | Yes      | <https://api.github.com>   |
 | createPortEntity     | Whether should create port entity with the action or not. You can set this to `false` if you'd like to create the entry yourself with `port-labs/port-github-action`                                     | No       | true                       |
 
+## Runner requirements
+
+The action runs on the runner itself, without Docker. The runner needs `git`, `curl` and `jq`. Python is installed with
+[mise-action-wrapper](https://github.com/SonarSource/mise-action-wrapper) (version pinned in [`mise.toml`](mise.toml)),
+whatever the runner provides, and the pinned requirements of [`requirements.txt`](requirements.txt) are installed in a
+virtualenv for each run.
+
+The mise wrapper and the requirements download (from Repox, through
+[config-pip](https://github.com/SonarSource/ci-github-actions/tree/master/config-pip)) read credentials from Vault, so
+the calling job needs the `id-token: write` permission and an Artifactory reader role in Vault for its repository.
+
 ## Quickstart - Scaffold Golang Template
 
 Follow these steps to get started with the Golang template

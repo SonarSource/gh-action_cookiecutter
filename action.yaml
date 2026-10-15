@@ -58,6 +58,59 @@ inputs:
 outputs:
   repoURL:
     description: 'The URL of the created repository'
+    value: ${{ steps.scaffold.outputs.repoURL }}
 runs:
-  using: docker
-  image: Dockerfile
+  using: composite
+  steps:
+    - name: Configure pip
+      uses: SonarSource/ci-github-actions/config-pip@983645f538ff01044b1e567adb23e6f527d8b52a # v1
+      with:
+        # cached below: its own key hashes the caller's requirements files, not this action's
+        disable-caching: 'true'
+    - name: Install Python with mise
+      uses: SonarSource/mise-action-wrapper@v1
+      with:
+        cache-key-prefix: mise-gh-action-cookiecutter
+        working_directory: ${{ github.action_path }}
+        install_args: python
+    - name: Prepare the pip cache
+      id: pip-cache
+      shell: bash
+      run: |
+        echo "dir=$HOME/.cache/gh-action-cookiecutter/pip" >> "$GITHUB_OUTPUT"
+        # the wheels depend on the requirements and on the Python version pinned in mise.toml
+        echo "sha256=$({ cat "$GITHUB_ACTION_PATH/requirements.txt"; grep '^python' "$GITHUB_ACTION_PATH/mise.toml"; } | sha256sum | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+    - name: Cache the pip downloads
+      uses: SonarSource/gh-action_cache@0b86c7a0e6c3cb8238c826be7dd9fdfd02f16f8b # v1.7.3
+      with:
+        path: ${{ steps.pip-cache.outputs.dir }}
+        key: pip-${{ runner.os }}-${{ runner.arch }}-gh-action-cookiecutter-${{ steps.pip-cache.outputs.sha256 }}
+    - name: Install the Python requirements
+      id: requirements
+      shell: bash
+      working-directory: ${{ github.action_path }}
+      env:
+        PIP_CACHE_DIR: ${{ steps.pip-cache.outputs.dir }}
+      run: '"$GITHUB_ACTION_PATH/scripts/install-requirements.sh"'
+    - name: Scaffold the repository
+      id: scaffold
+      shell: bash
+      env:
+        VENV: ${{ steps.requirements.outputs.venv }}
+        INPUT_TOKEN: ${{ inputs.token }}
+        INPUT_PORTCLIENTID: ${{ inputs.portClientId }}
+        INPUT_PORTCLIENTSECRET: ${{ inputs.portClientSecret }}
+        INPUT_BLUEPRINTIDENTIFIER: ${{ inputs.blueprintIdentifier }}
+        INPUT_REPOSITORYNAME: ${{ inputs.repositoryName }}
+        INPUT_REPOSITORYVISIBILITY: ${{ inputs.repositoryVisibility }}
+        INPUT_ORGANIZATIONNAME: ${{ inputs.organizationName }}
+        INPUT_COOKIECUTTERTEMPLATE: ${{ inputs.cookiecutterTemplate }}
+        INPUT_PORTUSERINPUTS: ${{ inputs.portUserInputs }}
+        INPUT_GITHUBURL: ${{ inputs.githubURL }}
+        INPUT_PORTRUNID: ${{ inputs.portRunId }}
+        INPUT_MONOREPOURL: ${{ inputs.monorepoUrl }}
+        INPUT_SCAFFOLDDIRECTORY: ${{ inputs.scaffoldDirectory }}
+        INPUT_TEMPLATEDIRECTORY: ${{ inputs.templateDirectory }}
+        INPUT_CREATEPORTENTITY: ${{ inputs.createPortEntity }}
+        INPUT_ADDLINKTOPORT: ${{ inputs.addLinkToPort }}
+      run: '"$GITHUB_ACTION_PATH/scripts/run.sh" "$VENV"'
