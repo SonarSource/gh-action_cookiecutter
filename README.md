@@ -150,8 +150,10 @@ Follow these steps to get started with the Golang template
     jobs:
       scaffold:
         runs-on: ubuntu-latest
+        permissions:
+          id-token: write
         steps:
-          - uses: port-labs/cookiecutter-gha@v1.1
+          - uses: SonarSource/gh-action_cookiecutter@v2
             with:
               portClientId: ${{ secrets.PORT_CLIENT_ID }}
               portClientSecret: ${{ secrets.PORT_CLIENT_SECRET }}
