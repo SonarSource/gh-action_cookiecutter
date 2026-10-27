@@ -81,7 +81,7 @@ runs:
         # the wheels depend on the requirements and on the Python version pinned in mise.toml
         echo "sha256=$({ cat "$GITHUB_ACTION_PATH/requirements.txt"; grep '^python' "$GITHUB_ACTION_PATH/mise.toml"; } | sha256sum | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
     - name: Cache the pip downloads
-      uses: SonarSource/gh-action_cache@0b86c7a0e6c3cb8238c826be7dd9fdfd02f16f8b # v1.7.3
+      uses: SonarSource/gh-action_cache@141f879febb7781981b1e091927d8125cff2c145 # v1.7.4
       with:
         path: ${{ steps.pip-cache.outputs.dir }}
         key: pip-${{ runner.os }}-${{ runner.arch }}-gh-action-cookiecutter-${{ steps.pip-cache.outputs.sha256 }}
