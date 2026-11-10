@@ -63,7 +63,7 @@ runs:
   using: composite
   steps:
     - name: Configure pip
-      uses: SonarSource/ci-github-actions/config-pip@983645f538ff01044b1e567adb23e6f527d8b52a # v1
+      uses: SonarSource/ci-github-actions/config-pip@e2032bdce92b0675c839fd6a697c8bb0078985d5 # v2
       with:
         # cached below: its own key hashes the caller's requirements files, not this action's
         disable-caching: 'true'
