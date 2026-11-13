@@ -63,7 +63,7 @@ runs:
   using: composite
   steps:
     - name: Configure pip
-      uses: SonarSource/ci-github-actions/config-pip@983645f538ff01044b1e567adb23e6f527d8b52a # v1
+      uses: SonarSource/ci-github-actions/config-pip@0bcfefcfa58f975805e4c48653a64f633fa414d5 # v1
       with:
         # cached below: its own key hashes the caller's requirements files, not this action's
         disable-caching: 'true'
@@ -81,7 +81,7 @@ runs:
         # the wheels depend on the requirements and on the Python version pinned in mise.toml
         echo "sha256=$({ cat "$GITHUB_ACTION_PATH/requirements.txt"; grep '^python' "$GITHUB_ACTION_PATH/mise.toml"; } | sha256sum | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
     - name: Cache the pip downloads
-      uses: SonarSource/gh-action_cache@0b86c7a0e6c3cb8238c826be7dd9fdfd02f16f8b # v1.7.3
+      uses: SonarSource/gh-action_cache@10fff0296bfc17164fb1ed6473f7238df3430ebf # v1.7.5
       with:
         path: ${{ steps.pip-cache.outputs.dir }}
         key: pip-${{ runner.os }}-${{ runner.arch }}-gh-action-cookiecutter-${{ steps.pip-cache.outputs.sha256 }}
