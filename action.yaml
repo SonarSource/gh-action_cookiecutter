@@ -68,9 +68,9 @@ runs:
         # cached below: its own key hashes the caller's requirements files, not this action's
         disable-caching: 'true'
     - name: Install Python with mise
-      uses: SonarSource/mise-action-wrapper@v1
+      uses: SonarSource/mise-action-wrapper@v2
       with:
-        cache-key-prefix: mise-gh-action-cookiecutter
+        cache_key_prefix: mise-gh-action-cookiecutter
         working_directory: ${{ github.action_path }}
         install_args: python
     - name: Prepare the pip cache
